@@ -35,5 +35,6 @@ pip install jupyterlab
 pip install jupyter
 pip install pandas
 pip install pyarrow
+pip install "psycopg[binary,pool]"
 
 popd
