@@ -19,7 +19,7 @@ else
 fi
 
 # 检查环境是否已经存在
-if conda env list | grep -q $env_name
+if conda env list | grep -F "$env_name" | grep -v "ml-learning"
 then
     echo "环境 $env_name 已存在"
 else
@@ -27,7 +27,7 @@ else
     conda create -n $env_name python=3.10 -y
 fi
 
-eval "$(conda shell.bash hook)"
+eval "$(conda shell.bash hook)" 2>&1 > /dev/null
 conda activate $env_name
 
 # 依赖包
