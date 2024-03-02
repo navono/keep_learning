@@ -37,5 +37,7 @@ pip install pandas
 pip install pyarrow
 pip install "psycopg[binary,pool]"
 pip install opencv-python
+pip install shapely
+pip install pillow
 
 popd
