@@ -39,5 +39,7 @@ pip install "psycopg[binary,pool]"
 pip install opencv-python
 pip install shapely
 pip install pillow
+pip install svgpathtools
+pip install matplotlib
 
 popd
