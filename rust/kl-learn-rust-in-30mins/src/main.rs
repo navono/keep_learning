@@ -9,4 +9,13 @@ fn main() {
 
     let mut writer = BufWriter::new(stdout.lock());
     say(&message, width, &mut writer).unwrap();
+
+    fn1();
+}
+
+fn fn1() {
+    let x = 5;
+    let y = 6;
+    let z = x + y;
+    println!("The value of z is: {}", z);
 }
