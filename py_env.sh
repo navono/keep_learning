@@ -41,5 +41,7 @@ pip install shapely
 pip install pillow
 pip install svgpathtools
 pip install matplotlib
+pip install waifu2x
+pip install replicate
 
 popd
