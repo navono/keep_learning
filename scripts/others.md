@@ -17,3 +17,33 @@ CMake 设置
 > -DCMAKE_INSTALL_PREFIX=D:\data\lib
 >
 
+# CI\CD
+
+## Jenkins
+
+```
+pipeline {
+    agent any
+
+    stages {
+        stage('Web 界面') {
+            steps {
+                echo '构建 Web 组态'
+                build 'ConfigurationPlatform'
+            }
+        }
+        stage('Web 服务') {
+            steps {
+                echo '构建 Web 服务'
+                build 'WebServer'
+            }
+        }
+        stage('VF 生成服务') {
+            steps {
+                echo '构建 VF 生成服务'
+                build 'VFConfigGen'
+            }
+        }
+    }
+}
+```
