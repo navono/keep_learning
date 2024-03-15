@@ -19,6 +19,9 @@ set HOUR=%CURRENT_TIME:~0,2%
 REM 使用 %TIME:~3,2% 来提取后两个字符（分钟）
 set MINUTE=%CURRENT_TIME:~3,2%
 
+REM 如果小时不足两位数，则在前面添加零
+if %HOUR% LSS 10 set HOUR=0%HOUR%
+
 cd ..
 "VFConfigGen/third_party/7z/7z.exe" a -tzip "ConfigGen_%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%-%HOUR%%MINUTE%.zip" "./out/"
 ```
