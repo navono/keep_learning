@@ -8,7 +8,7 @@
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/sinks/stdout_color_sinks.h"// or "../stdout_sinks.h" if no color needed
+#include "spdlog/sinks/stdout_color_sinks.h" // or "../stdout_sinks.h" if no color needed
 #include "spdlog/spdlog.h"
 
 static inline int NowDateToInt() {
@@ -21,7 +21,7 @@ static inline int NowDateToInt() {
   localtime_s(&p, &now);
 #else
   localtime_r(&now, &p);
-#endif// _WIN32
+#endif // _WIN32
   int now_date = (1900 + p.tm_year) * 10000 + (p.tm_mon + 1) * 100 + p.tm_mday;
   return now_date;
 }
@@ -35,29 +35,28 @@ static inline int NowTimeToInt() {
   localtime_s(&p, &now);
 #else
   localtime_r(&now, &p);
-#endif// _WIN32
+#endif // _WIN32
 
   int now_int = p.tm_hour * 10000 + p.tm_min * 100 + p.tm_sec;
   return now_int;
 }
 
 class XLogger {
- public:
+public:
   static XLogger *getInstance() {
     static XLogger xlogger;
     return &xlogger;
   }
 
-  std::shared_ptr<spdlog::logger> getLogger() {
-    return m_logger;
-  }
+  std::shared_ptr<spdlog::logger> getLogger() { return m_logger; }
 
- private:
+private:
   // make constructor private to avoid outside instance
   XLogger() {
     // hardcode log path
-    const std::string log_dir = "./Log";// should create the folder if not exist
-    const std::string logger_name_prefix = "VFConfigGen_";
+    const std::string log_dir =
+        "./log"; // should create the folder if not exist
+    const std::string logger_name_prefix = "cuda_";
 
     // decide print to console or log file
     bool console = true;
@@ -69,23 +68,38 @@ class XLogger {
       // logger name with timestamp
       int date = NowDateToInt();
       int time = NowTimeToInt();
-      //const std::string logger_name = logger_name_prefix + std::to_string(date) + "_" + std::to_string(time);
+      // const std::string logger_name = logger_name_prefix +
+      // std::to_string(date) + "_" + std::to_string(time);
       const std::string logger_name = logger_name_prefix + std::to_string(date);
 
       if (console) {
-        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(log_dir + "/" + logger_name + ".log", 5 * 1024 * 1024, 7);// multi part log files, with every part 500M, max 1000 files
+        auto console_sink =
+            std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+            log_dir + "/" + logger_name + ".log", 5 * 1024 * 1024,
+            7); // multi part log files, with every part 500M, max 1000 files
         spdlog::sinks_init_list sink_list = {console_sink, file_sink};
         m_logger = std::make_shared<spdlog::logger>("my_logger", sink_list);
-        //m_logger = spdlog::stdout_color_st(logger_name); // single thread console output faster
+        // m_logger = spdlog::stdout_color_st(logger_name); // single thread
+        // console output faster
       } else {
-        //m_logger = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>(logger_name, log_dir + "/" + logger_name + ".log"); // only one log file
-        m_logger = spdlog::create_async<spdlog::sinks::rotating_file_sink_mt>(logger_name, log_dir + "/" + logger_name + ".log", 5 * 1024 * 1024, 7);// multi part log files, with every part 500M, max 1000 files
+        // m_logger =
+        // spdlog::create_async<spdlog::sinks::basic_file_sink_mt>(logger_name,
+        // log_dir + "/" + logger_name + ".log"); // only one log file
+        m_logger = spdlog::create_async<spdlog::sinks::rotating_file_sink_mt>(
+            logger_name, log_dir + "/" + logger_name + ".log", 5 * 1024 * 1024,
+            7); // multi part log files, with every part 500M, max 1000 files
       }
 
       // custom format
-      //      m_logger->set_pattern("[%Y-%m-%d %H:%M:%S.%f] [%P:%t] [%l] [%@] [%^%!%$] %v");// with timestamp, thread_id, filename and line number
-      m_logger->set_pattern("[%Y-%m-%d %H:%M:%S.%f] [%P:%t] [%l] [%^%!%$] %v");// with timestamp, thread_id, filename and line number
+      //      m_logger->set_pattern("[%Y-%m-%d %H:%M:%S.%f] [%P:%t] [%l] [%@]
+      //      [%^%!%$] %v");// with timestamp, thread_id, filename and line
+      //      number
+      m_logger->set_pattern(
+          "[%Y-%m-%d %H:%M:%S.%f] [%P:%t] [%l] [%^%!%$] %v"); // with timestamp,
+                                                              // thread_id,
+                                                              // filename and
+                                                              // line number
 
       if (level == "trace") {
         m_logger->set_level(spdlog::level::trace);
@@ -109,7 +123,7 @@ class XLogger {
   }
 
   ~XLogger() {
-    spdlog::drop_all();// must do this
+    spdlog::drop_all(); // must do this
   }
 
   void *operator new(size_t size) {}
@@ -117,13 +131,23 @@ class XLogger {
   XLogger(const XLogger &) = delete;
   XLogger &operator=(const XLogger &) = delete;
 
- private:
+private:
   std::shared_ptr<spdlog::logger> m_logger;
 };
 
 // use embedded macro to support file and line number
-#define XLOG_TRACE(...) SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(), spdlog::level::trace, __VA_ARGS__)
-#define XLOG_DEBUG(...) SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(), spdlog::level::debug, __VA_ARGS__)
-#define XLOG_INFO(...) SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(), spdlog::level::info, __VA_ARGS__)
-#define XLOG_WARN(...) SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(), spdlog::level::warn, __VA_ARGS__)
-#define XLOG_ERROR(...) SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(), spdlog::level::err, __VA_ARGS__)
+#define XLOG_TRACE(...)                                                        \
+  SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(),                \
+                     spdlog::level::trace, __VA_ARGS__)
+#define XLOG_DEBUG(...)                                                        \
+  SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(),                \
+                     spdlog::level::debug, __VA_ARGS__)
+#define XLOG_INFO(...)                                                         \
+  SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(),                \
+                     spdlog::level::info, __VA_ARGS__)
+#define XLOG_WARN(...)                                                         \
+  SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(),                \
+                     spdlog::level::warn, __VA_ARGS__)
+#define XLOG_ERROR(...)                                                        \
+  SPDLOG_LOGGER_CALL(XLogger::getInstance()->getLogger().get(),                \
+                     spdlog::level::err, __VA_ARGS__)
