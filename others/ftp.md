@@ -9,6 +9,23 @@ xcopy /s /e /i "./bin" "../out/VFConfigGen"
 压缩文件夹
 
 ```batch
+chcp 65001
+@echo off
+setlocal
+
+rem 使用 wmic 命令获取标准化日期格式
+for /f "tokens=2 delims==" %%i in ('wmic os get localdatetime /value') do (
+    set "datetime=%%i"
+    goto :parse_date
+)
+
+:parse_date
+rem 从标准化日期中提取日期部分
+set "date=%datetime:~0,4%%datetime:~4,2%%datetime:~6,2%"
+
+rem 输出标准化日期格式
+echo Standardized date: %date%
+
 REM 获取当前时间
 set CURRENT_TIME=%TIME%
 
@@ -22,8 +39,10 @@ set MINUTE=%CURRENT_TIME:~3,2%
 REM 如果小时不足两位数，则在前面添加零
 if %HOUR% LSS 10 set HOUR=0%HOUR%
 
-cd ..
-"VFConfigGen/third_party/7z/7z.exe" a -tzip "ConfigGen_%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%-%HOUR%%MINUTE%.zip" "./out/"
+cd ../out
+"../tools/7z/7z.exe" a -tzip "ConfigGen_%date%-%HOUR%%MINUTE%.zip" "./ConfigGen"
+
+endlocal
 ```
 
 上传文件到 FTP 服务

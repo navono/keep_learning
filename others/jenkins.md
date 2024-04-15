@@ -9,3 +9,23 @@
 ```
 
 重启服务。
+
+## Pipeline
+
+```
+pipeline {
+	agent any
+	stages {
+		stage("Web") {
+			steps {
+				build 'ConfigGenWeb'
+			}
+		}
+		stage("Web Server") {
+			steps {
+				build 'ConfigGenServer'
+			}
+		}
+	}
+}
+```
