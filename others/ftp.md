@@ -1,3 +1,5 @@
+# Windows Batch
+
 删除、拷贝文件夹
 
 ```batch
@@ -126,4 +128,14 @@ ftp -n -s:%FTP_COMMAND_FILE%
 del %FTP_COMMAND_FILE%
 goto:eof
 
+```
+
+# Win 11 文件夹浏览器
+
+如果在文件夹浏览器无法打开 ftp 服务，可尝试在
+
+```
+系统设置 -> 网络和 Internet ->  Internet 选项 -> 高级
+
+将【使用被动 FTP（用于防火墙和 DSL 调制解调器的兼容）】选项去勾选
 ```
