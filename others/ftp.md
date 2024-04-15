@@ -83,12 +83,15 @@ endlocal
 ```
 echo off
 
-set FTP_HOST=10.30.76.161
+set FTP_HOST=10.30.28.170
+set FTP_PORT=12121
 set FTP_USER=admin
 set FTP_PASS=admin
 set FTP_DIR=ConfigGen
-set LATEST_FILE=latest
-set TEMP_DIR=%TEMP%\ConfigGen
+set LATEST_FILE=latest_web
+
+set FTP_COMMAND_FILE=%TEMP%\ftp.txt
+set DEST_FILE_DIR=ConfigGen
 
 :: 创建临时目录
 mkdir "%TEMP_DIR%" 2>nul
@@ -102,14 +105,25 @@ echo %LATEST_FILE_NAME%
 call:downloadFile %LATEST_FILE_NAME%
 
 del "%LATEST_FILE%"
+
+"C:\Program Files\7-Zip\7z.exe" x "ConfigGen_20240415-1708.zip" -o"./"
+
+rem 使用 xcopy 命令将源目录及其内容复制到目标目录
+xcopy "ConfigGenWeb\*" "ConfigGen\ConfigGenWeb" /s /e /y /i
+xcopy "ConfigGenServer\*" "ConfigGen\ConfigGenServer" /s /e /y /i
+rmdir /s /q "ConfigGenWeb" "ConfigGenServer"
+
 goto :EOF
 
 :downloadFile
-echo user %FTP_USER% %FTP_PASS% > "%TEMP_DIR%\ftp.txt"
-echo cd %FTP_DIR% >> "%TEMP_DIR%\ftp.txt"
-echo get %1 >> "%TEMP_DIR%\ftp.txt"
-echo bye >> "%TEMP_DIR%\ftp.txt"
-ftp -n -s:"%TEMP_DIR%\ftp.txt" %FTP_HOST%
-del "%TEMP_DIR%\ftp.txt"
+echo open %FTP_HOST% %FTP_PORT% > %FTP_COMMAND_FILE%
+echo user %FTP_USER% %FTP_PASS% >> %FTP_COMMAND_FILE%
+echo cd %FTP_DIR% >> %FTP_COMMAND_FILE%
+echo get %1 >> %FTP_COMMAND_FILE%
+echo bye >> %FTP_COMMAND_FILE%
+ftp -n -s:%FTP_COMMAND_FILE%
+
+del %FTP_COMMAND_FILE%
 goto:eof
+
 ```
