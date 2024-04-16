@@ -22,7 +22,6 @@
 如果已经存在 `Pipfile` 文件，可以使用：
 
 ```
-> export PIPENV_VENV_IN_PROJECT=1
 > pipenv install
 ```
 
