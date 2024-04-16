@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/kl-learn-rust-in-30mins/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/rust/kl-learn-rust-in-30mins/target" />
     </content>
-    <orderEntry type="jdk" jdkName="learning" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (keep_learning)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
