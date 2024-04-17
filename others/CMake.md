@@ -17,3 +17,24 @@ cmake --build . --config Debug
 cmake --build . --config Release
 ```
 
+```
+macro(RemoveDebugCXXFlag flag)
+string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+string(REPLACE "${flag}" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+endmacro()
+
+macro(RemoveReleaseCXXFlag flag)
+string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+string(REPLACE "${flag}" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+endmacro()
+
+RemoveDebugCXXFlag("/RTCs")
+RemoveDebugCXXFlag("/RTC1")
+RemoveDebugCXXFlag("/RTCc")
+RemoveDebugCXXFlag("/RTCu")
+
+RemoveReleaseCXXFlag("/RTCs")
+RemoveReleaseCXXFlag("/RTC1")
+RemoveReleaseCXXFlag("/RTCc")
+RemoveReleaseCXXFlag("/RTCu")
+```
