@@ -28,7 +28,15 @@ set CURRENT_TIME=%TIME%
 set HOUR=%CURRENT_TIME:~0,2%
 set MINUTE=%CURRENT_TIME:~3,2%
 
+for /f "tokens=1" %%h in ("%HOUR%") do (
+    set "HOUR=%%h"
+)
+for /f "tokens=1" %%h in ("%MINUTE%") do (
+    set "MINUTE=%%h"
+)
+
 if %HOUR% LSS 10 set HOUR=0%HOUR%
+if %MINUTE% LSS 10 set MINUTE=0%MINUTE%
 
 set latestZipName="ConfigGen_%date%-%HOUR%%MINUTE%.zip"
 cd ../out
@@ -56,26 +64,34 @@ chcp 65001
 @echo off
 setlocal
 
+cd ../out
+
 set FTP_HOST=10.30.28.170
 set FTP_PORT=12121
 set FTP_USER=admin
-set FTP_PASS=admin
+set FTP_PASS=
 set FTP_DIR=ConfigGen
-set LATEST_ZIP_FILE="../out/latest/*.zip"
-set LATEST_FILE="../out/latest_web"
+set LATEST_ZIP_FILE=latest
+set LATEST_FILE=latest_web
 
 rem 上传最新的压缩包到 FTP 服务器
-set FTP_COMMAND_FILE=%TEMP%\ftp.txt
+set FTP_COMMAND_FILE=ftp.txt
 echo open %FTP_HOST% %FTP_PORT% > %FTP_COMMAND_FILE%
 echo user %FTP_USER% %FTP_PASS% >> %FTP_COMMAND_FILE%
 echo cd %FTP_DIR% >> %FTP_COMMAND_FILE%
-echo put %LATEST_FILE% >> %FTP_COMMAND_FILE%
-echo put %LATEST_ZIP_FILE% >> %FTP_COMMAND_FILE%
+
+echo put %LATEST_FILE% /%FTP_DIR%/%LATEST_FILE% >> %FTP_COMMAND_FILE%
+
+REM echo put %LATEST_ZIP_FILE% >> %FTP_COMMAND_FILE%
+for %%f in (%LATEST_ZIP_FILE%\*.zip) do (
+  echo put %%f /%FTP_DIR%/%%~nxf >> %FTP_COMMAND_FILE%
+)
+
 echo bye >> %FTP_COMMAND_FILE%
 ftp -n -s:%FTP_COMMAND_FILE%
 
 rem 清理临时文件
-del %FTP_COMMAND_FILE%
+REM del %FTP_COMMAND_FILE%
 
 endlocal
 ```
