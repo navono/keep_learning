@@ -8,7 +8,7 @@ include(CPM)
 include(import_library)
 include(assign_source_group)
 
-project(cudaBasic LANGUAGES CXX CUDA)
+project(demo_basic LANGUAGES CXX CUDA)
 
 set(CMAKE_CUDA_STANDARD 17)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
