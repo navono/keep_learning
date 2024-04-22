@@ -2,6 +2,10 @@
 #include <cstdio>
 #include <iostream>
 
+// Kernel function to add the elements of two arrays
+// __global__ 变量声明符，作用是将add函数变成可以在GPU上运行的函数
+// __global__ 函数被称为kernel，
+// 在 GPU 上运行的代码通常称为设备代码（device code），而在 CPU 上运行的代码是主机代码（host code）。
 __global__ void hi_gpu() { printf("Hello World from GPU!\n"); }
 
 int main(int argc, char **argv) {
