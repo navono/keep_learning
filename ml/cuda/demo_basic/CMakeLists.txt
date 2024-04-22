@@ -8,7 +8,8 @@ include(CPM)
 include(import_library)
 include(assign_source_group)
 
-project(demo_basic LANGUAGES CXX CUDA)
+set(TARGET_NAME demo_basic)
+project(${TARGET_NAME} LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CUDA_STANDARD 17)
@@ -19,8 +20,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 编译选项
 if (TARGET_PLATFORM_WINDOWS)
-#    add_compile_options(/W4)
-#    add_compile_options(/WX-)
+    #    add_compile_options(/W4)
+    #    add_compile_options(/WX-)
 else ()
     add_compile_options(-Wall -Wextra -pedantic)
 endif ()
@@ -101,8 +102,8 @@ if (TARGET_PLATFORM_WINDOWS)
     # /SUBSYSTEM:WINDOWS
     # /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
     # /SUBSYSTEM:CONSOLE
-#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
-#    add_executable(${PROJECT_NAME} WIN32 ${PROJECT_FILES})
+    #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+    #    add_executable(${PROJECT_NAME} WIN32 ${PROJECT_FILES})
 
     add_executable(${PROJECT_NAME} ${PROJECT_FILES})
 else ()
@@ -117,17 +118,17 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_DEFINITIONS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_OPTIONS})
-set_target_properties(cudaBasic PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 if (TARGET_PLATFORM_WINDOWS)
-#    set_target_properties(${PROJECT_NAME} PROPERTIES
-#            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
-#    target_compile_definitions(${PROJECT_NAME} PRIVATE
-#            # Prevents Windows.h from adding unnecessary includes
-#            WIN32_LEAN_AND_MEAN
-#            # Prevents Windows.h from defining min/max as macros
-#            NOMINMAX
-#            _CRT_SECURE_NO_WARNINGS)
+    #    set_target_properties(${PROJECT_NAME} PROPERTIES
+    #            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
+    #    target_compile_definitions(${PROJECT_NAME} PRIVATE
+    #            # Prevents Windows.h from adding unnecessary includes
+    #            WIN32_LEAN_AND_MEAN
+    #            # Prevents Windows.h from defining min/max as macros
+    #            NOMINMAX
+    #            _CRT_SECURE_NO_WARNINGS)
 
     # 链接 MFC 库
     target_link_libraries(${PROJECT_NAME} PRIVATE
