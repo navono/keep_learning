@@ -75,3 +75,6 @@ dev 依赖
    > export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
    >
    > 后再进行安装
+
+2. 如果碰到依赖包的 `Python` 版本不符合的时候，可以将依赖包的 `Python` 版本指定为要求的版本，例如：
+   > numpy = {version = "^1.26.0", python="^3.10,<3.13"}
