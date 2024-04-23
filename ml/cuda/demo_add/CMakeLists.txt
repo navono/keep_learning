@@ -8,8 +8,8 @@ include(CPM)
 include(import_library)
 include(assign_source_group)
 
-set(TARGET_NAME demo_add)
-project(${TARGET_NAME} LANGUAGES CXX CUDA)
+set(PROJECT_NAME demo_add)
+project(${PROJECT_NAME} LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CUDA_STANDARD 17)
@@ -118,7 +118,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_DEFINITIONS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_OPTIONS})
-set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 if (TARGET_PLATFORM_WINDOWS)
     #    set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -131,9 +131,9 @@ if (TARGET_PLATFORM_WINDOWS)
     #            _CRT_SECURE_NO_WARNINGS)
 
     # 链接 MFC 库
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-            "$<$<CONFIG:Debug>:${MFC_LIB_DEBUG}>"
-            "$<$<CONFIG:Release>:${MFC_LIB_RELEASE}>")
+    #    target_link_libraries(${PROJECT_NAME} PRIVATE
+    #            "$<$<CONFIG:Debug>:${MFC_LIB_DEBUG}>"
+    #            "$<$<CONFIG:Release>:${MFC_LIB_RELEASE}>")
 
     #    cmake_host_system_information(RESULT CPU_NUMBER_OF_LOGICAL_CORES QUERY NUMBER_OF_LOGICAL_CORES)
     #    add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP${CPU_NUMBER_OF_LOGICAL_CORES}>)
