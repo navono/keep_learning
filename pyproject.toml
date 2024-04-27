@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "keep-learning"
+version = "0.1.0"
+description = ""
+authors = ["Darkness <navono007@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+jupyterlab = "^4.1.6"
+jupyter = "^1.0.0"
+pandas = "^2.2.2"
+pyarrow = "^16.0.0"
+psycopg = { extras = ["binary", "pool"], version = "^3.1.18" }
+opencv-python = "^4.9.0.80"
+shapely = "^2.0.4"
+pillow = "^10.3.0"
+svgpathtools = "^1.6.1"
+matplotlib = "^3.8.4"
+replicate = "^0.25.2"
+torch = { version = "2.3.0+cu121", source = "pytorch" }
+torchvision = { version = "0.18.0+cu121", source = "pytorch" }
+torchaudio = { version = "2.3.0+cu121", source = "pytorch" }
+
+[[tool.poetry.source]]
+name = "pytorch"
+priority = "primary"
+url = "https://download.pytorch.org/whl/cu121/"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
