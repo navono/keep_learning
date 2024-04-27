@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  api: &main_app
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: pid_project_extract:${PID_PROJECT_EXTRACT_VERSION:-latest}
+    restart: always
+    env_file:
+      - .env
+    environment:
+      PID_PROJECT_EXTRACT_HOST: 0.0.0.0
+      PID_PROJECT_EXTRACT_DB_FILE: /db_data/db.sqlite3
+    volumes:
+      - pid_project_extract-db-data:/db_data/
+
+  migrator:
+    image: pid_project_extract:${PID_PROJECT_EXTRACT_VERSION:-latest}
+    restart: "no"
+    command: piccolo migrations forwards all
+    environment:
+      PID_PROJECT_EXTRACT_DB_FILE: /db_data/db.sqlite3
+      PICCOLO_CONF: "pid_project_extract.piccolo_conf"
+    volumes:
+      - pid_project_extract-db-data:/db_data/
+
+
+
+volumes:
+  pid_project_extract-db-data:
+    name: pid_project_extract-db-data
