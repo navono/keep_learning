@@ -1,6 +1,6 @@
 [submodule "rust/rustlings"]
-	path = rust/rustlings
+	path = program_lang/rust/rustlings
 	url = git@github.com:rust-lang/rustlings.git
 [submodule "rust/teach-rs"]
-	path = rust/teach-rs
+	path = program_lang/rust/teach-rs
 	url = git@github.com:tweedegolf/teach-rs.git
