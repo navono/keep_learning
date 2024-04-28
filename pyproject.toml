@@ -7,22 +7,23 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "3.11.9"
 jupyterlab = "^4.1.6"
 jupyter = "^1.0.0"
-pandas = "^2.2.2"
+pandas = ">=2.0.3,<3.0.0"
 pyarrow = "^16.0.0"
 psycopg = { extras = ["binary", "pool"], version = "^3.1.18" }
 opencv-python = "^4.9.0.80"
 shapely = "^2.0.4"
 pillow = "^10.3.0"
 svgpathtools = "^1.6.1"
-matplotlib = "^3.8.4"
+matplotlib = ">=3.7.2,<4.0.0"
 replicate = "^0.25.2"
 torch = { version = "2.3.0+cu121", source = "pytorch" }
 torchvision = { version = "0.18.0+cu121", source = "pytorch" }
 torchaudio = { version = "2.3.0+cu121", source = "pytorch" }
 onnxruntime = "^1.17.3"
+d2l = "^1.0.3"
 
 [[tool.poetry.source]]
 name = "pytorch"
