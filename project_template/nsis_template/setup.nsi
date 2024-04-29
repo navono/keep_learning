@@ -37,9 +37,15 @@ Unicode true
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 
-;choose data home
-; !include "ui.nsdinc"
-; Page custom fnc_hmikit_show
+Function .onInit
+    ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}" "UninstallString"
+    ${If} $0 != ""
+        MessageBox MB_YESNO "$(CONFIGGEN_UNINSTALL)" IDYES uninst
+    ${EndIf}
+
+    uninst:
+      ExecWait '"$INSTDIR\uninst.exe"'
+FunctionEnd
 
 Var Dialog
 
@@ -137,6 +143,7 @@ FunctionEnd
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+; !define /date PRODUCT_DATE %y%m%d
 !define /date PRODUCT_DATE %y%m%d
 OutFile "ConfigGen-Setup-${PRODUCT_DATE}.exe"
 InstallDir "C:\ConfigGen"

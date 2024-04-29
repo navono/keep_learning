@@ -1,6 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
+set "base_dir=%cd%"
+
 set "file_path=%cd%\ip.txt"
 for /f "usebackq delims=" %%a in ("%file_path%") do (
     set "new_ip=%%a"
@@ -31,13 +33,13 @@ set "APP_PARAMS=-logdir=\"%WEED_DATA_HOME%\log\" server -ip=%new_ip% -filer=true
 
 REM update nginx config
 set "nginx_conf=nginx-1.24.0\\conf\\nginx.conf"
-set "new_root=\"%cd:\=\\%\\ConfigGenWeb\""
+set "new_root=\"%base_dir:\=\\%\\ConfigGenWeb\""
 rem 使用sed命令更新nginx.conf中的root配置行
 sed -i "s@^\s*listen.*;@            listen  18086;@" %nginx_conf%
 sed -i "s@^\s*root.*;@            root %new_root%;@" %nginx_conf%
 
 REM update web config
-set "web_conf=ConfigGenWeb\\static\\config.js"
+set "web_conf=%base_dir%\\ConfigGenWeb\\static\\config.js"
 sed -i "s/http:\/\/*.*.*.*:*/http:\/\/%new_ip%:18680';/g" %web_conf%
 
 REM install nginx service
@@ -45,16 +47,16 @@ REM install nginx service
 %NSSM% start ConfigGenNginx
 
 REM update web server config
-set "web_server_config=ConfigGenServer\\config\\web_server_config.json"
+set "web_server_config=%base_dir%\\ConfigGenServer\\config\\web_server_config.json"
 sed -i "7s/.*/    \"port\": 15432,/" %web_server_config%
 sed -i "12s/.*/  \"file_server_addr\": \"http:\/\/%new_ip%:8888\",/" %web_server_config%
 
-%NSSM% install ConfigGenServer "%cd%\\ConfigGenServer\\ConfigGenServer.exe"
-%NSSM% set ConfigGenServer AppDirectory "%cd%\\ConfigGenServer
+%NSSM% install ConfigGenServer "%base_dir%\\ConfigGenServer\\ConfigGenServer.exe"
+%NSSM% set ConfigGenServer AppDirectory "%base_dir%\\ConfigGenServer
 %NSSM% start ConfigGenServer
 
-%NSSM% install ConfigGenInfer "%cd%\\ConfigGenInfer\\ConfigGenInfer.exe"
-%NSSM% set ConfigGenInfer AppDirectory "%cd%\\ConfigGenInfer
+%NSSM% install ConfigGenInfer "%base_dir%\\ConfigGenInfer\\ConfigGenInfer.exe"
+%NSSM% set ConfigGenInfer AppDirectory "%base_dir%\\ConfigGenInfer
 %NSSM% start ConfigGenInfer
 
 endlocal

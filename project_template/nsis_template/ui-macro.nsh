@@ -14,5 +14,5 @@ LangString CONFIGGEN_IP_ADDR_EMPTY ${LANG_ENGLISH} "IP Address can not be empty"
 LangString CONFIGGEN_IP_ADDR_EMPTY ${LANG_SIMPCHINESE} "IP 地址不能为空"
 
 
-LangString LICENSE_AGREE ${LANG_ENGLISH} "Agree"
-LangString LICENSE_AGREE ${LANG_SIMPCHINESE} "同意"
+LangString CONFIGGEN_UNINSTALL ${LANG_ENGLISH} "The product has been installed, do you want to uninstall it?"
+LangString CONFIGGEN_UNINSTALL ${LANG_SIMPCHINESE} "已安装该产品，是否执行卸载操作？"
