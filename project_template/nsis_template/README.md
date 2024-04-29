@@ -1,28 +1,13 @@
-# nsis_templates
+# ConfigGen Installer
 
-An nsis sample project.
-
-## Project structure
-
-```
-|---- root
-    |---- cpp-demo
-    |---- NSIS
-    |---- nssm-2.24
-```
-
-- `cpp-demo` is a software which is the package target to install.
-- `NSIS` is a project that contains the basic content of the installer.
-- `nssm-2.24` is a tool that can install the software as a service.
+ConfigGen 的安装包制作.
 
 ## How to use
-
-example to make base project's installer execute:
 
 1. move to prorject folder
 
 ```
-> cd nsis_templates
+> cd configgen_installer
 ```
 
 2. make

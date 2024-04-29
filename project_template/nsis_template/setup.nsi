@@ -7,9 +7,6 @@ Unicode true
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
-; MUI 1.67 compatible ------
-!include "MUI2.nsh"
-
 ; MUI Settings
 !define MUI_ABORTWARNING
 ; !define MUI_ICON "../../modules/icon/72.ico"
@@ -19,6 +16,16 @@ Unicode true
 !define MUI_LANGDLL_REGISTRY_ROOT "${PRODUCT_UNINST_ROOT_KEY}"
 !define MUI_LANGDLL_REGISTRY_KEY "${PRODUCT_UNINST_KEY}"
 !define MUI_LANGDLL_REGISTRY_VALUENAME "NSIS:Language"
+!define MUI_FINISHPAGE_NOAUTOCLOSE
+
+; MUI 1.67 compatible ------
+!include "MUI2.nsh"
+!include "nsDialogs.nsh"
+; !include "nsisunz.nsh"
+
+; !define MUI_PAGE_CUSTOMFUNCTION_SHOW MyPageShow
+; !define MUI_PAGE_CUSTOMFUNCTION_LEAVE MyPageLeave
+; !insertmacro MUI_PAGE_CUSTOM nsDialogsPage MyPageShow MyPageLeave
 
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
@@ -31,8 +38,89 @@ Unicode true
 !insertmacro MUI_PAGE_DIRECTORY
 
 ;choose data home
-!include "ui.nsdinc"
-Page custom fnc_hmikit_show
+; !include "ui.nsdinc"
+; Page custom fnc_hmikit_show
+
+Var Dialog
+
+Var hCtl_test_DirRequest1_Txt
+Var hCtl_test_DirRequest1_Btn
+Var hCtl_test_IP_Txt
+
+Page custom UserInputPage UserInputPageLeave
+Function UserInputPage 
+  nsDialogs::Create 1018
+	Pop $Dialog
+
+	${If} $Dialog == error
+		Abort
+	${EndIf}
+
+  !insertmacro MUI_HEADER_TEXT "$(CONFIGGEN_TITLE)" "$(CONFIGGEN_INFO)"
+
+  ; ${NSD_CreateLabel} 30.0u 25u 67.75u 15.33u "$(CONFIGGEN_DATA_DIR)"
+  ; Pop $0
+
+  ; ${NSD_CreateText} 28.0u 40.0u 199.87u 14u ""
+  ; Pop $hCtl_test_DirRequest1_Txt
+  ; EnableWindow $hCtl_test_DirRequest1_Txt 0
+  ; ; ${NSD_OnChange} $hCtl_test_DirRequest1_Txt set_hmikit_home
+
+  ; ; === DirRequest1_Btn (type: Button) ===
+  ; ${NSD_CreateButton} 230.0u 40.0u 20.33u 17.33u "..."
+  ; Pop $hCtl_test_DirRequest1_Btn
+  ; ${NSD_OnClick} $hCtl_test_DirRequest1_Btn func_hCtl_test_DirRequest1_Click
+  
+
+  ${NSD_CreateLabel} 30.0u 25u 67.75u 15.33u "$(CONFIGGEN_IP_ADDR)"
+  Pop $1
+
+  ${NSD_CreateText} 30.0u 40u 100.0u 14u ""
+  Pop $hCtl_test_IP_Txt
+  EnableWindow $hCtl_test_IP_Txt 1
+  ${NSD_OnChange} $hCtl_test_IP_Txt func_set_runtime_ip
+
+  GetDlgItem $0 $HWNDPARENT 1
+  EnableWindow $0 0
+
+	nsDialogs::Show
+FunctionEnd
+
+; onClick handler for DirRequest Button $hCtl_test_DirRequest1_Btn
+Function func_hCtl_test_DirRequest1_Click
+	Pop $R0
+	${If} $R0 == $hCtl_test_DirRequest1_Btn
+		${NSD_GetText} $hCtl_test_DirRequest1_Txt $R0
+		nsDialogs::SelectFolderDialog /NOUNLOAD "" "$R0"
+		Pop $R0
+		${If} "$R0" != "error"
+			${NSD_SetText} $hCtl_test_DirRequest1_Txt "$R0"
+
+      WriteRegStr HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" "CONFIGGEN_HOME" "$R0"
+		${EndIf}
+	${EndIf}
+FunctionEnd
+
+Function func_set_runtime_ip
+  ${NSD_GetText} $hCtl_test_IP_Txt $0
+
+  StrCmp $0 "" 0 +2
+  MessageBox MB_ICONINFORMATION|MB_OK "$(CONFIGGEN_IP_ADDR_EMPTY)"
+
+  GetDlgItem $0 $HWNDPARENT 1
+  EnableWindow $0 1
+
+FunctionEnd
+
+Function UserInputPageLeave
+  ; ${NSD_GetText} $hCtl_test_DirRequest1_Txt $0
+  ${NSD_GetText} $hCtl_test_IP_Txt $0
+
+  FileOpen $1 "$INSTDIR\ip.txt" w
+  FileWrite $1 "$0"
+  FileClose $1
+
+FunctionEnd
 
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
@@ -60,43 +148,43 @@ RequestExecutionLevel admin
 
 BrandingText "SUPCON, $(^Name)"
 
-; DetailPrint "Installing to $INSTDIR"
 
 Section "Core" SEC01
-  DetailPrint "This is a debug message."
-
-  SetOutPath "$INSTDIR\cpp-demo"
+  SetOutPath "$INSTDIR\FileServer"
   SetOverwrite ifnewer
-  File /r cpp-demo\*.*
+  File /r bin\\FileServer\\*.*
   
   SetOutPath "$INSTDIR\nginx-1.24.0"
   SetOverwrite ifnewer
-  File /r nginx-1.24.0\*.*
+  File /r bin\\nginx-1.24.0\\*.*
 
   SetOutPath "$INSTDIR\nssm-2.24"
   SetOverwrite ifnewer
-  File /r nssm-2.24\*.*
+  File /r bin\\nssm-2.24\\*.*
+
+  SetOutPath "$INSTDIR\7z"
+  SetOverwrite ifnewer
+  File /r bin\\7z\\*.*
 
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
 
+  File build.7z
+  File bin\\sed.exe
   File service-install.bat
   File service-uninstall.bat
+  File service-update-config.bat
   
   ; ReadRegDWORD $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum" "Install"
+  ; MessageBox MB_OK "VC++ 2015 Runtime: $0"
 
-  SetOutPath "$INSTDIR"
+  nsExec::Exec '"cmd.exe" /C service-update-config.bat admin"'
   nsExec::Exec "service-install.bat"
+
+  delete /REBOOTOK "$INSTDIR\service-update-config.bat"
+  delete /REBOOTOK "$INSTDIR\sed.exe"
 SectionEnd
 
-; Section "mosquitto" SEC02
-;   SetOutPath "$INSTDIR\mosquitto"
-;   SetOverwrite ifnewer
-;   File /r mosquitto\*.*
-
-;   SetOutPath "$INSTDIR\mosquitto"
-;   nsExec::Exec ""
-; SectionEnd
 
 Section -AdditionalIcons
   SetOutPath $INSTDIR
@@ -132,13 +220,17 @@ Section Uninstall
   SetOutPath "$INSTDIR"
   nsExec::Exec "service-uninstall.bat"
 
-  RMDir /r "$INSTDIR\cpp-demo"
+  RMDir /r "$INSTDIR\FileServer"
   RMDir /r "$INSTDIR\nginx-1.24.0"
   RMDir /r "$INSTDIR\nssm-2.24"
+  RMDir /r "$INSTDIR\ConfigGenWeb"
+  RMDir /r "$INSTDIR\ConfigGenServer"
+  RMDir /r "$INSTDIR\ConfigGenInfer"
   
   delete /REBOOTOK "$INSTDIR\service-install.bat"
   delete /REBOOTOK "$INSTDIR\service-uninstall.bat"
   delete /REBOOTOK "$INSTDIR\uninst.exe"
+  delete /REBOOTOK "$INSTDIR\sed.exe"
 
   RMDir /r "$INSTDIR"
 
