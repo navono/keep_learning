@@ -152,25 +152,25 @@ BrandingText "SUPCON, $(^Name)"
 Section "Core" SEC01
   SetOutPath "$INSTDIR\FileServer"
   SetOverwrite ifnewer
-  File /r bin\\FileServer\\*.*
+  File /r modules\\FileServer\\*.*
   
   SetOutPath "$INSTDIR\nginx-1.24.0"
   SetOverwrite ifnewer
-  File /r bin\\nginx-1.24.0\\*.*
+  File /r modules\\nginx-1.24.0\\*.*
 
   SetOutPath "$INSTDIR\nssm-2.24"
   SetOverwrite ifnewer
-  File /r bin\\nssm-2.24\\*.*
+  File /r modules\\nssm-2.24\\*.*
 
   SetOutPath "$INSTDIR\7z"
   SetOverwrite ifnewer
-  File /r bin\\7z\\*.*
+  File /r modules\\7z\\*.*
 
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
 
   File build.7z
-  File bin\\sed.exe
+  File modules\\sed.exe
   File service-install.bat
   File service-uninstall.bat
   File service-update-config.bat
