@@ -44,7 +44,8 @@ Function .onInit
     ${EndIf}
 
     uninst:
-      ExecWait '"$INSTDIR\uninst.exe"'
+      ExecWait '"$0" /S _?=$INSTDIR'
+      Delete $0
 FunctionEnd
 
 Var Dialog
