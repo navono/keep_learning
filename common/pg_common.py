@@ -9,7 +9,7 @@ def notice_handler(message):
 
 
 def connect():
-    conn_info = f'host=localhost port=5432 dbname=dvdrental user=postgres password=1234'
+    conn_info = f'host=localhost port=15432 dbname=dvdrental user=postgres password=1234'
     conn = psycopg.connect(conninfo=conn_info)
 
     # 创建游标对象
@@ -18,7 +18,7 @@ def connect():
 
 
 def connect2():
-    conn_info = f'host=localhost port=5432 dbname=dvdrental user=postgres password=1234'
+    conn_info = f'host=localhost port=15432 dbname=dvdrental user=postgres password=1234'
     conn = psycopg.connect(conninfo=conn_info)
 
     # 创建游标对象
