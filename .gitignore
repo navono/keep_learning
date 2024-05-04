@@ -165,3 +165,5 @@ bin
 build
 cmake-build-debug
 cmake-build-release
+waves_yesno
+waves_yesno.*
