@@ -4,3 +4,6 @@
 [submodule "rust/teach-rs"]
 	path = program_lang/rust/teach-rs
 	url = git@github.com:tweedegolf/teach-rs.git
+[submodule "ml/pytorch/deep_learning"]
+	path = ml/pytorch/deep_learning
+	url = git@github.com:mrdbourke/pytorch-deep-learning.git
