@@ -24,6 +24,7 @@ torchvision = { version = "0.18.0+cu121", source = "pytorch" }
 torchaudio = { version = "2.3.0+cu121", source = "pytorch" }
 onnxruntime = "^1.17.3"
 d2l = "^1.0.3"
+soundfile = "^0.12.1"
 
 [[tool.poetry.source]]
 name = "pytorch"
