@@ -28,15 +28,9 @@ set CURRENT_TIME=%TIME%
 set HOUR=%CURRENT_TIME:~0,2%
 set MINUTE=%CURRENT_TIME:~3,2%
 
-for /f "tokens=1" %%h in ("%HOUR%") do (
-    set "HOUR=%%h"
-)
-for /f "tokens=1" %%h in ("%MINUTE%") do (
-    set "MINUTE=%%h"
-)
-
+rem 确保 HOUR 和 MINUTE 是两位数
 if %HOUR% LSS 10 set HOUR=0%HOUR%
-if %MINUTE% LSS 10 set MINUTE=0%MINUTE%
+REM if %MINUTE% LSS 10 set MINUTE=0%MINUTE%
 
 set latestZipName="ConfigGen_%date%-%HOUR%%MINUTE%.zip"
 cd ../out
