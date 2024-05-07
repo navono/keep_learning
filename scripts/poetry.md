@@ -53,6 +53,12 @@ dev 依赖
 > poetry export -f requirements.txt -o requirements.txt --without-hashes --dev
 >
 
+非 `package` 模式：
+> [tool.poetry]
+>
+> package-mode = false
+
+
 其他命令参考官方文档。
 
 ## poetry 全局设置
