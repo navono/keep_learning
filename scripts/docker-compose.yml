@@ -1,0 +1,48 @@
+version: '3'
+services:
+  web:
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "19081:18081"
+    volumes:
+      - /home/ping/data/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - /home/ping/data/nginx/conf/conf.d:/etc/nginx/conf.d
+      - /home/ping/data/nginx/log:/var/log/nginx
+      - /home/ping/sourcecode/lang_assistants_build:/usr/share/nginx
+
+#  react:
+#    container_name: react
+#    image: node:lts
+#    volumes:
+#      - ~/sourcecode/fe/react-ts-demo:/app
+#    working_dir: /app
+#    command: sh -c "npm install && npm run start" # 启动react的开发服务器,默认端口3000
+#    environment:
+#      - CHOKIDAR_USEPOLLING=true
+
+#  test:
+#    image: nvidia/cuda:12.2.0-base-ubuntu22.04
+#    command: nvidia-smi
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: 1
+#              capabilities: [ gpu ]
+
+#networks:
+#  default:
+#    name: milvus
+
+# 自定义网桥 behelpful-network
+# networks:
+#   # 自行创建 network 命令： docker network create -d bridge 你自己起名(behelpful-network)
+#   behelpful-network:
+#     # 启动时不自动创建网桥,需要提前手动创建 网桥 behelpful-network
+#     # 若为 true 需要在启动前创建一个 network，false 则系统会给创建
+#     external: false
+#     # 网络模式（默认是 bridge）
+#     driver: bridge

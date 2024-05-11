@@ -5,6 +5,7 @@ description = ""
 authors = ["Darkness <navono007@gmail.com>"]
 readme = "README.md"
 package-mode = false
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "3.11.9"
@@ -28,7 +29,7 @@ soundfile = "^0.12.1"
 
 [[tool.poetry.source]]
 name = "pytorch"
-priority = "secondary"
+priority = "supplemental"
 url = "https://download.pytorch.org/whl/cu121/"
 
 

@@ -2,6 +2,12 @@
 setlocal enabledelayedexpansion
 
 set "base_dir=%cd%"
+set NSSM="nssm-2.24\\win64\\nssm.exe"
+set WEED_DATA_HOME=%CONFIGGEN_HOME%
+
+set "file_path=%cd%\ip.txt"
+set "SED=%cd%\tools\sed.exe"
+set "RM"=%cd%\tools\rm.exe"
 
 set "file_path=%cd%\ip.txt"
 for /f "usebackq delims=" %%a in ("%file_path%") do (
@@ -10,9 +16,6 @@ for /f "usebackq delims=" %%a in ("%file_path%") do (
 )
 
 :break
-
-set NSSM="nssm-2.24\\win64\\nssm.exe"
-set WEED_DATA_HOME=%CONFIGGEN_HOME%
 
 REM 如果 CONFIGGEN_HOME 为空，则设置 WEED_DATA_HOME 为 ProgramData 目录
 if "%WEED_DATA_HOME%"=="" (
@@ -35,12 +38,12 @@ REM update nginx config
 set "nginx_conf=nginx-1.24.0\\conf\\nginx.conf"
 set "new_root=\"%base_dir:\=\\%\\ConfigGenWeb\""
 rem 使用sed命令更新nginx.conf中的root配置行
-sed -i "s@^\s*listen.*;@            listen  18086;@" %nginx_conf%
-sed -i "s@^\s*root.*;@            root %new_root%;@" %nginx_conf%
+%SED% -i "s@^\s*listen.*;@            listen  18086;@" %nginx_conf%
+%SED% -i "s@^\s*root.*;@            root %new_root%;@" %nginx_conf%
 
 REM update web config
 set "web_conf=%base_dir%\\ConfigGenWeb\\static\\config.js"
-sed -i "s/http:\/\/*.*.*.*:*/http:\/\/%new_ip%:18680';/g" %web_conf%
+%SED% -i "s/http:\/\/*.*.*.*:*/http:\/\/%new_ip%:18680';/g" %web_conf%
 
 REM install nginx service
 %NSSM% install ConfigGenNginx "%cd%\\nginx-1.24.0\\nginx.exe"
@@ -48,8 +51,8 @@ REM install nginx service
 
 REM update web server config
 set "web_server_config=%base_dir%\\ConfigGenServer\\config\\web_server_config.json"
-sed -i "7s/.*/    \"port\": 15432,/" %web_server_config%
-sed -i "12s/.*/  \"file_server_addr\": \"http:\/\/%new_ip%:8888\",/" %web_server_config%
+%SED% -i "7s/.*/    \"port\": 15432,/" %web_server_config%
+%SED% -i "12s/.*/  \"client_file_server_addr\": \"http:\/\/%new_ip%:8888\",/" %web_server_config%
 
 %NSSM% install ConfigGenServer "%base_dir%\\ConfigGenServer\\ConfigGenServer.exe"
 %NSSM% set ConfigGenServer AppDirectory "%base_dir%\\ConfigGenServer
@@ -58,5 +61,7 @@ sed -i "12s/.*/  \"file_server_addr\": \"http:\/\/%new_ip%:8888\",/" %web_server
 %NSSM% install ConfigGenInfer "%base_dir%\\ConfigGenInfer\\ConfigGenInfer.exe"
 %NSSM% set ConfigGenInfer AppDirectory "%base_dir%\\ConfigGenInfer
 %NSSM% start ConfigGenInfer
+
+%RM% "-f sed*"
 
 endlocal

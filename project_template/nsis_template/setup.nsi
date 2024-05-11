@@ -3,7 +3,7 @@ Unicode true
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "ConfigGen"
 !define PRODUCT_VERSION "1.0.0"
-!define PRODUCT_PUBLISHER "SUPCON, Inc."
+!define PRODUCT_PUBLISHER "SUPCON Technology Co., Ltd."
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
@@ -44,17 +44,19 @@ Function .onInit
     ${EndIf}
 
     uninst:
-      ExecWait '"$INSTDIR\uninst.exe"'
+      ExecWait '"$0" /S _?=$INSTDIR'
+      Delete $0
+
 FunctionEnd
 
 Var Dialog
 
-Var hCtl_test_DirRequest1_Txt
-Var hCtl_test_DirRequest1_Btn
+; Var hCtl_test_DirRequest1_Txt
+; Var hCtl_test_DirRequest1_Btn
 Var hCtl_test_IP_Txt
 
 Page custom UserInputPage UserInputPageLeave
-Function UserInputPage 
+Function UserInputPage
   nsDialogs::Create 1018
 	Pop $Dialog
 
@@ -76,7 +78,7 @@ Function UserInputPage
   ; ${NSD_CreateButton} 230.0u 40.0u 20.33u 17.33u "..."
   ; Pop $hCtl_test_DirRequest1_Btn
   ; ${NSD_OnClick} $hCtl_test_DirRequest1_Btn func_hCtl_test_DirRequest1_Click
-  
+
 
   ${NSD_CreateLabel} 30.0u 25u 67.75u 15.33u "$(CONFIGGEN_IP_ADDR)"
   Pop $1
@@ -93,19 +95,19 @@ Function UserInputPage
 FunctionEnd
 
 ; onClick handler for DirRequest Button $hCtl_test_DirRequest1_Btn
-Function func_hCtl_test_DirRequest1_Click
-	Pop $R0
-	${If} $R0 == $hCtl_test_DirRequest1_Btn
-		${NSD_GetText} $hCtl_test_DirRequest1_Txt $R0
-		nsDialogs::SelectFolderDialog /NOUNLOAD "" "$R0"
-		Pop $R0
-		${If} "$R0" != "error"
-			${NSD_SetText} $hCtl_test_DirRequest1_Txt "$R0"
+; Function func_hCtl_test_DirRequest1_Click
+; 	Pop $R0
+; 	${If} $R0 == $hCtl_test_DirRequest1_Btn
+; 		${NSD_GetText} $hCtl_test_DirRequest1_Txt $R0
+; 		nsDialogs::SelectFolderDialog /NOUNLOAD "" "$R0"
+; 		Pop $R0
+; 		${If} "$R0" != "error"
+; 			${NSD_SetText} $hCtl_test_DirRequest1_Txt "$R0"
 
-      WriteRegStr HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" "CONFIGGEN_HOME" "$R0"
-		${EndIf}
-	${EndIf}
-FunctionEnd
+;       WriteRegStr HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" "CONFIGGEN_HOME" "$R0"
+; 		${EndIf}
+; 	${EndIf}
+; FunctionEnd
 
 Function func_set_runtime_ip
   ${NSD_GetText} $hCtl_test_IP_Txt $0
@@ -142,7 +144,7 @@ FunctionEnd
 !include "ui-macro.nsh"
 ; MUI end ------
 
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+Name "${PRODUCT_NAME}"
 ; !define /date PRODUCT_DATE %y%m%d
 !define /date PRODUCT_DATE %y%m%d
 OutFile "ConfigGen-Setup-${PRODUCT_DATE}.exe"
@@ -153,35 +155,32 @@ ShowInstDetails show
 ShowUnInstDetails show
 RequestExecutionLevel admin
 
-BrandingText "SUPCON, $(^Name)"
+BrandingText "SUPCON Technology Co., Ltd. $(^Name)"
 
 
 Section "Core" SEC01
   SetOutPath "$INSTDIR\FileServer"
   SetOverwrite ifnewer
-  File /r modules\\FileServer\\*.*
-  
+  File /r bin\\FileServer\\*.*
+
   SetOutPath "$INSTDIR\nginx-1.24.0"
   SetOverwrite ifnewer
-  File /r modules\\nginx-1.24.0\\*.*
+  File /r bin\\nginx-1.24.0\\*.*
 
   SetOutPath "$INSTDIR\nssm-2.24"
   SetOverwrite ifnewer
-  File /r modules\\nssm-2.24\\*.*
+  File /r bin\\nssm-2.24\\*.*
 
-  SetOutPath "$INSTDIR\7z"
+  SetOutPath "$INSTDIR\tools"
   SetOverwrite ifnewer
-  File /r modules\\7z\\*.*
+  File /r bin\\tools\\*.*
 
   SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-
   File build.7z
-  File modules\\sed.exe
   File service-install.bat
   File service-uninstall.bat
   File service-update-config.bat
-  
+
   ; ReadRegDWORD $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum" "Install"
   ; MessageBox MB_OK "VC++ 2015 Runtime: $0"
 
@@ -189,7 +188,6 @@ Section "Core" SEC01
   nsExec::Exec "service-install.bat"
 
   delete /REBOOTOK "$INSTDIR\service-update-config.bat"
-  delete /REBOOTOK "$INSTDIR\sed.exe"
 SectionEnd
 
 
@@ -233,11 +231,11 @@ Section Uninstall
   RMDir /r "$INSTDIR\ConfigGenWeb"
   RMDir /r "$INSTDIR\ConfigGenServer"
   RMDir /r "$INSTDIR\ConfigGenInfer"
-  
+  RMDir /r "$INSTDIR\tools"
+
   delete /REBOOTOK "$INSTDIR\service-install.bat"
   delete /REBOOTOK "$INSTDIR\service-uninstall.bat"
   delete /REBOOTOK "$INSTDIR\uninst.exe"
-  delete /REBOOTOK "$INSTDIR\sed.exe"
 
   RMDir /r "$INSTDIR"
 
