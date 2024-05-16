@@ -7,7 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/program_lang/rust/kl-learn-rust-in-30mins/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Poetry (keep_learning)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (keep_learning)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
