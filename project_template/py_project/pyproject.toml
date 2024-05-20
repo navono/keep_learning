@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "pid-search"
+version = "0.1.0"
+description = ""
+authors = ["Pingqixing <pingqixing@supcon.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+loguru = "^0.7.2"
+asyncio = "^3.4.3"
+pyyaml = "^6.0.1"
+fastapi = "^0.111.0"
+uvicorn = "^0.29.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

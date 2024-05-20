@@ -3,6 +3,7 @@ import uvicorn
 from loguru import logger
 
 app = FastAPI()
+app.include_router(handler_router)
 
 
 class HTTPServer:
