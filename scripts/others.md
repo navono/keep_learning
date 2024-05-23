@@ -47,3 +47,15 @@ pipeline {
     }
 }
 ```
+
+# Open CV
+
+```python
+cv2.imread(image_path)
+```
+
+无法加载中文路径图片，改为：
+
+```python
+cv2.imdecode(np.fromfile(image_path, dtype=np.uint8), -1)
+```
