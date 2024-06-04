@@ -36,6 +36,9 @@ clip-retrieval = "^2.44.0"
 all-clip = "^1.2.0"
 jupyterlab = "^4.2.1"
 jupyter = "^1.0.0"
+clip = { git = "https://github.com/openai/CLIP.git" }
+setuptools = "69.5.1"
+packaging = "22.0"
 
 [tool.poetry.group.dev.dependencies]
 img2dataset = "^1.45.0"
