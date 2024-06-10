@@ -2,10 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ml/cuda/cmake-build-debug/_deps/fmt-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ml/cuda/cmake-build-debug/_deps/spdlog-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ml/experiment/antarctic-captions" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ml/experiment/antarctic-captions/CLIP" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ml/pytorch/deep_learning" vcs="Git" />
   </component>
 </project>
