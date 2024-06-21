@@ -1,5 +1,6 @@
 import httpx  # an HTTP client library and dependency of Prefect
 from prefect import flow, task
+import time
 
 
 @task(retries=2)
@@ -19,6 +20,7 @@ def get_contributors(repo_info: dict):
     response = httpx.get(contributors_url)
     response.raise_for_status()
     contributors = response.json()
+    time.sleep(5)
     return contributors
 
 
