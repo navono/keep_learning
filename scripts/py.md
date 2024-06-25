@@ -49,3 +49,14 @@
 - 在虚拟环境中，可用 `pip` 安装包
 - 在 `Pipfile` 中添加包名，然后执行 `pipenv install`
 - 在命令行， `pipenv install xx`
+
+# OpenCV
+
+```python
+import numpy as np
+from pathlib import Path
+import cv2
+
+image = cv2.imdecode(np.fromfile(Path(image_path), dtype=np.uint8), -1)
+img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+```

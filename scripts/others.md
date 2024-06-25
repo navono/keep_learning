@@ -59,3 +59,10 @@ cv2.imread(image_path)
 ```python
 cv2.imdecode(np.fromfile(image_path, dtype=np.uint8), -1)
 ```
+
+# PowerShell
+
+远程安装 `.ps1` 没有权限失败
+
+> Set-ExecutionPolicy RemoteSigned -Scope LocalMachine
+>
