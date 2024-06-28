@@ -9,6 +9,7 @@ import numpy as np
 from pathlib import Path
 import more_itertools
 import torch
+from dask.distributed import Client, get_worker
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -38,19 +39,37 @@ def worker(gpu_id, image_paths, result_list, lock):
         lock.release()
 
 
-def single_gpu_process(process_per_gpu):
-    lock = multiprocessing.Lock()
+def test_worker(gpu_id, cur_image_paths):
+    start_time = time.time()
+    from paddleocr import PaddleOCR
+    ocr = PaddleOCR(lang="ch", show_log=False,
+                    use_gpu=True,
+                    gpu_id=gpu_id,
+                    det_model_dir="./model_weight/ocr/ch_PP-OCRv4_det_server_infer",
+                    rec_model_dir="./model_weight/ocr/ch_PP-OCRv4_rec_server_infer")
+
+    dask_worker = get_worker()
+    results = []
+    count = len(cur_image_paths)
+    for idx, item in enumerate(cur_image_paths):
+        image = cv2.imdecode(np.fromfile(Path(item), dtype=np.uint8), -1)
+        img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        print(f'{dask_worker.name} [{idx}/{count}] process: ', item.name)
+        results.append(ocr.ocr(img, cls=False, slice=OCR_SLICE))
+
+    print(f'worker {dask_worker.name} exit, takes {time.time() - start_time}')
+    return results
+
+
+def single_gpu_process(process_per_gpu, client):
     start_time = time.time()
 
-    img_root_dir = os.getcwd() + "/example_data/2"
-    img_files = [img_root_dir + "/" +
-                 f for f in os.listdir(img_root_dir) if f.endswith('.png')]
+    img_root_dir = Path(R"D:\work\sourcecode\pid_search\output\upload\2")
+    img_files = [img_root_dir / f for f in os.listdir(img_root_dir) if f.endswith('.png')]
 
-    manager = multiprocessing.Manager()
-    results = manager.list()
-    processes = []
     per_process = math.ceil(len(img_files) / process_per_gpu)
 
+    futures = []
     for i in range(0, process_per_gpu):
         cur_image_paths = img_files[i *
                                     per_process:(i + 1) * per_process]
@@ -59,13 +78,11 @@ def single_gpu_process(process_per_gpu):
 
         print('cur_image_paths: ', len(cur_image_paths))
 
-        p = multiprocessing.Process(target=worker, args=(
-            0, cur_image_paths, results, lock))
-        p.start()
-        processes.append(p)
+        futures.append(client.submit(test_worker, 0, cur_image_paths))
 
-    for p in processes:
-        p.join()
+    results = []
+    for future in futures:
+        results.extend(client.gather(future))
 
     print("process results: ", len(results))
     end_time = time.time()
@@ -78,12 +95,10 @@ def multi_gpu_process():
     img_files = [img_root_dir + "/" +
                  f for f in os.listdir(img_root_dir) if f.endswith('.png')]
 
-    # gpu_count = torch.cuda.device_count()
-    gpu_count = 2
+    gpu_count = torch.cuda.device_count()
     batched_data = list(more_itertools.chunked(
         img_files, len(img_files) // gpu_count + 1))
 
-    queue = multiprocessing.Queue()
     manager = multiprocessing.Manager()
     results = manager.list()
     lock = multiprocessing.Lock()
@@ -139,17 +154,22 @@ def get_gpu_memory():
 
 
 if __name__ == '__main__':
-    import torch
+    client = Client()
 
-    torch.multiprocessing.set_start_method("spawn")
+    # import torch
+    # torch.multiprocessing.set_start_method("spawn")
 
     # import paddle
     # paddle.utils.run_check()
 
     gpus_memory = get_gpu_memory()
-    mem_per_process = 3
-    process_per_gpu = int(gpus_memory[0] // mem_per_process)
-    # 4: 91
-    single_gpu_process(4)
+    # mem_per_process = 3
+    # process_per_gpu = int(gpus_memory[0] // mem_per_process)
+    # # 4: 91
 
-    # multi_gpu_process()
+    if len(gpus_memory) == 1:
+        single_gpu_process(4, client)
+    else:
+        multi_gpu_process()
+
+    client.close()
